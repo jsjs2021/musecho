@@ -1,0 +1,28 @@
+{
+  "log": { "loglevel": "warning" },
+  "dns": { "servers": ["https+local://8.8.8.8/dns-query"] },
+  "inbounds": [
+    {
+      "port": __XRAY_PORT__,
+      "protocol": "vless",
+      "settings": {
+        "clients": [{ "flow": "xtls-rprx-vision", "id": "__UUID__" }],
+        "decryption": "none",
+        "fallbacks": [
+          { "dest": 3001 },
+          { "dest": 3002, "path": "/vless" },
+          { "dest": 3003, "path": "/vmess" },
+          { "dest": 3004, "path": "/trojan" },
+          { "dest": 3005, "path": "/shadowsocks" }
+        ]
+      },
+      "streamSettings": { "network": "tcp" }
+    },
+    { "listen": "127.0.0.1", "port": 3001, "protocol": "vless", "settings": { "clients": [{ "id": "__UUID__" }], "decryption": "none" }, "streamSettings": { "network": "ws", "security": "none" } },
+    { "listen": "127.0.0.1", "port": 3002, "protocol": "vless", "settings": { "clients": [{ "id": "__UUID__", "level": 0 }], "decryption": "none" }, "sniffing": { "destOverride": ["http", "tls", "quic"], "enabled": true, "metadataOnly": false }, "streamSettings": { "network": "ws", "security": "none", "wsSettings": { "path": "/vless" } } },
+    { "listen": "127.0.0.1", "port": 3003, "protocol": "vmess", "settings": { "clients": [{ "alterId": 0, "id": "__UUID__" }] }, "sniffing": { "destOverride": ["http", "tls", "quic"], "enabled": true, "metadataOnly": false }, "streamSettings": { "network": "ws", "wsSettings": { "path": "/vmess" } } },
+    { "listen": "127.0.0.1", "port": 3004, "protocol": "trojan", "settings": { "clients": [{ "password": "__UUID__" }] }, "sniffing": { "destOverride": ["http", "tls", "quic"], "enabled": true, "metadataOnly": false }, "streamSettings": { "network": "ws", "security": "none", "wsSettings": { "path": "/trojan" } } },
+    { "listen": "127.0.0.1", "port": 3005, "protocol": "shadowsocks", "settings": { "clients": [{ "method": "chacha20-ietf-poly1305", "password": "__UUID__" }], "decryption": "none" }, "sniffing": { "destOverride": ["http", "tls", "quic"], "enabled": true, "metadataOnly": false }, "streamSettings": { "network": "ws", "wsSettings": { "path": "/shadowsocks" } } }
+  ],
+  "outbounds": [{ "protocol": "freedom" }]
+}
